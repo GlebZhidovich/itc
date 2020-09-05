@@ -1,0 +1,29 @@
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+:host /deep/ ui-view {
+  flex: 3;
+}
+
+.navigate {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.navigate__ref {
+  text-decoration: none;
+  margin-bottom: 10px;
+}
+
+.active {
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.ui-view {
+  width: 100%;
+}
