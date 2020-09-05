@@ -1,3 +1,48 @@
-<div class="table">
+<div class="table__wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>id: </th>
+        <th>ФИО: </th>
+        <th>Пол: </th>
+        <th>Дата рождения: </th>
+        <th>Женат/замужем: </th>
+        <th>ВУЗ: </th>
+        <th>Номер телефона: </th>
+        <th>Редактировать: </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let field of fields.controls; let idx = index" [formGroup]="field">
+        <td>
+          <span>{{field.get('id').value}}</span>
+          <input type="text" name="id" formControlName="id">
+        </td>
+        <td>
+          <span>{{field.get('fullName').value}}</span>
+        </td>
+        <td>
+          <span>{{field.get('sex').value}}</span>
+        </td>
+        <td>
+          <span>{{field.get('birthday').value}}</span>
+        </td>
+        <td>
+          <span>{{field.get('familyStatus').value}}</span>
+        </td>
+        <td>
+          <span>{{field.get('education').value}}</span>
+        </td>
+        <td>
+          <span>{{field.get('phone').value}}</span>
+        </td>
+        <td>
+          <button>Удалить</button>
+          <button>Редактировать</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
+  <button>Добавить блок</button>
 </div>

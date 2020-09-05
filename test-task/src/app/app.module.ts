@@ -1,4 +1,4 @@
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 // @ts-ignore
@@ -22,7 +22,8 @@ const STATES = [
   imports: [
     FormsModule,
     BrowserModule,
-    UIRouterModule.forRoot({ states: STATES }),
+    ReactiveFormsModule,
+    UIRouterModule.forRoot({states: STATES}),
   ],
   providers: [],
   bootstrap: [AppComponent]
