@@ -12,7 +12,6 @@ export class MaskDirective implements OnInit {
   }
 
   @HostListener('keydown', ['$event']) onKeyDown(event) {
-
     if (this.elementRef.nativeElement.value.includes('_') &&
       parseInt(event.key, 10)
     ) {

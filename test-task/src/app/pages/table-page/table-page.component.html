@@ -21,6 +21,10 @@
               type="text"
               name="id"
               formControlName="id">
+            <p class="alert"
+            *ngIf="field.get('id').invalid && field.get('id').touched">
+              Не верное значение
+            </p>
           </div>
         </td>
         <td>
@@ -30,6 +34,10 @@
               type="text"
               name="name"
               formControlName="fullName">
+            <p class="alert"
+              *ngIf="field.get('fullName').invalid && field.get('fullName').touched">
+              Не верное значение
+            </p>
           </div>
         </td>
         <td>
@@ -43,6 +51,10 @@
               type="radio"
               name="sex"
               formControlName="sex" value="жен">
+            <p class="alert"
+              *ngIf="field.get('sex').invalid && field.get('sex').touched">
+              Не верное значение
+            </p>
           </div>
         </td>
         <td>
@@ -52,6 +64,10 @@
               type="date"
               name="date"
               formControlName="birthday">
+            <p class="alert"
+              *ngIf="field.get('birthday').invalid && field.get('birthday').touched">
+              Не верное значение
+            </p>
           </div>
         </td>
         <td>
@@ -65,6 +81,10 @@
               value="женат">
             <label
               for="check{{idx}}">Да/Нет</label>
+            <p class="alert"
+              *ngIf="field.get('familyStatus').invalid && field.get('familyStatus').touched">
+              Не верное значение
+            </p>
           </div>
         </td>
         <td>
@@ -78,20 +98,26 @@
               <option value="БГУИР">БГУИР</option>
               <option value="МИТСО">МИТСО</option>
             </select>
+            <p class="alert"
+              *ngIf="field.get('education').invalid && field.get('education').touched">
+              Не верное значение
+            </p>
           </div>
         </td>
         <td>
           <span *ngIf="!field.get('isEdit').value">{{field.get('phone').value}}</span>
-          <div>
-<!--            *ngIf="field.get('isEdit').value"-->
-
+          <div
+            *ngIf="field.get('isEdit').value">
             <input
               formControlName="phone"
               [control]="field"
               appMask="(__) ______"
               type="tel"
               name="phone" >
-
+            <p class="alert"
+              *ngIf="field.get('phone').invalid && field.get('phone').touched">
+              Не верное значение
+            </p>
           </div>
         </td>
         <td>
@@ -114,5 +140,7 @@
       </tr>
     </tbody>
   </table>
-
+  <button
+    (click)="onSubmit()"
+  >Submit</button>
 </div>

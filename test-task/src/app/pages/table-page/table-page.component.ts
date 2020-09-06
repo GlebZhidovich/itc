@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { SaveService } from '../../services/save.service';
 
 interface IPersonsInfo {
-  id: number;
+  id: string;
   fullName: string;
   sex: string;
   birthday: string;
@@ -13,7 +14,7 @@ interface IPersonsInfo {
 
 const personsInfo: IPersonsInfo[] = [
   {
-    id: 1,
+    id: '1',
     fullName: 'Gleb Zhidovich',
     sex: 'муж',
     birthday: '1992-09-09',
@@ -22,7 +23,7 @@ const personsInfo: IPersonsInfo[] = [
     phone: '(33) 5233326'
   },
   {
-    id: 2,
+    id: '2',
     fullName: 'Zina Zhidovich',
     sex: 'жен',
     birthday: '1992-09-09',
@@ -41,7 +42,7 @@ export class TablePageComponent implements OnInit {
 
   public fields: FormArray;
 
-  constructor() {
+  constructor(private saveService: SaveService) {
   }
 
   ngOnInit() {
@@ -57,16 +58,17 @@ export class TablePageComponent implements OnInit {
   }
 
   onAddData(index: number): void {
-    const group = new FormGroup({
-      id: new FormControl(''),
-      fullName: new FormControl(''),
-      sex: new FormControl(''),
-      birthday: new FormControl(''),
-      familyStatus: new FormControl(''),
-      education: new FormControl(''),
-      phone: new FormControl(''),
-      isEdit: new FormControl(true),
-    });
+    const pattern = {
+      id: '',
+      fullName: '',
+      sex: '',
+      birthday: '',
+      familyStatus: '',
+      education: '',
+      phone: '',
+      isEdit: true
+    };
+    const group = this.toGroup(pattern);
     this.fields.insert(index + 1, group);
   }
 
@@ -75,28 +77,58 @@ export class TablePageComponent implements OnInit {
   }
 
   onSaveData(index: number): void {
-    this.fields.controls[index].get('isEdit').setValue(false);
+    if (this.fields.controls[index].valid) {
+      this.fields.controls[index].get('isEdit').setValue(false);
+    }
   }
 
   toEditable(person) {
     return {...person, isEdit: false};
   }
 
-  toControl(value) {
+  toControl(value, validators?) {
+    if (validators) {
+      return new FormControl(value, validators);
+    }
     return new FormControl(value);
   }
 
   toGroup(person): FormGroup {
+    const validators = {
+      id: [Validators.required,
+        Validators.minLength(1),
+        Validators.maxLength(10)],
+      fullName: [Validators.required,
+        Validators.minLength(6)],
+      sex: [Validators.required],
+      birthday: [Validators.required],
+      familyStatus: [Validators.required],
+      education: [Validators.required],
+    };
     const newPerson = {...person};
     for ( const key in newPerson ) {
-      if (newPerson[key] ||
+      if (typeof newPerson[key] === 'string' ||
       typeof newPerson[key] === 'boolean') {
-        newPerson[key] = this.toControl(newPerson[key]);
+        if (validators[key]) {
+          newPerson[key] = this.toControl(newPerson[key], validators[key]);
+        } else {
+          newPerson[key] = this.toControl(newPerson[key]);
+        }
       }
     }
     return new FormGroup(newPerson);
   }
 
+  onSubmit() {
+    if (this.fields.valid) {
+      const data = this.fields.value
+        .map(group => {
+          delete group.isEdit;
+          return group;
+        });
+      this.saveService.onSaveData(data);
+    }
+  }
 }
 
 
