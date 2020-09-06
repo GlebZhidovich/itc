@@ -1,12 +1,12 @@
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-// @ts-ignore
 import { UIRouterModule } from '@uirouter/angular';
 
 import { AppComponent } from './app/app.component';
 import { HelloPageComponent } from './pages/hello-page/hello-page.component';
 import { TablePageComponent } from './pages/table-page/table-page.component';
+import { MaskDirective } from './pages/table-page/directives/mask.directive';
 
 const STATES = [
   { name: 'hello', url: '/hello', component: HelloPageComponent },
@@ -17,7 +17,8 @@ const STATES = [
   declarations: [
     AppComponent,
     HelloPageComponent,
-    TablePageComponent
+    TablePageComponent,
+    MaskDirective
   ],
   imports: [
     FormsModule,

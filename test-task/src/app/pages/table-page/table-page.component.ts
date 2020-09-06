@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 
 interface IPersonsInfo {
   id: number;
   fullName: string;
   sex: string;
   birthday: string;
-  familyStatus: string;
+  familyStatus: boolean;
   education: string;
   phone: string;
 }
@@ -15,20 +15,20 @@ const personsInfo: IPersonsInfo[] = [
   {
     id: 1,
     fullName: 'Gleb Zhidovich',
-    sex: 'male',
-    birthday: '13.09.1992',
-    familyStatus: 'single',
-    education: 'BNTU',
-    phone: '5925520'
+    sex: 'муж',
+    birthday: '1992-09-09',
+    familyStatus: true,
+    education: 'БНТУ',
+    phone: '(33) 5233326'
   },
   {
     id: 2,
     fullName: 'Zina Zhidovich',
-    sex: 'female',
-    birthday: '13.09.1992',
-    familyStatus: 'single',
-    education: 'BNTU',
-    phone: '5925526'
+    sex: 'жен',
+    birthday: '1992-09-09',
+    familyStatus: false,
+    education: 'БГУИР',
+    phone: '(33) 5233326'
   }
 ];
 
@@ -45,36 +45,58 @@ export class TablePageComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.fields = new FormArray([
-    //   new FormGroup({
-    //     id: new FormControl(1),
-    //     fullName: new FormControl('Gleb Zhidovich'),
-    //     sex: new FormControl('male'),
-    //     birthday: new FormControl('13.09.1992'),
-    //     familyStatus: new FormControl('single'),
-    //     education: new FormControl('BNTU'),
-    //     phone: new FormControl('5925520'),
-    //   })
-    // ]);
     const mapPerson = personsInfo
-      .map(toGroup);
+      .map(person => this.toEditable(person))
+      .map(person => this.toGroup(person));
 
     this.fields = new FormArray(mapPerson);
-    console.log(personsInfo);
   }
 
-}
+  onDeleteData(index: number): void {
+    this.fields.removeAt(index);
+  }
 
-function toControl(value) {
-  return new FormControl(value);
-}
+  onAddData(index: number): void {
+    const group = new FormGroup({
+      id: new FormControl(''),
+      fullName: new FormControl(''),
+      sex: new FormControl(''),
+      birthday: new FormControl(''),
+      familyStatus: new FormControl(''),
+      education: new FormControl(''),
+      phone: new FormControl(''),
+      isEdit: new FormControl(true),
+    });
+    this.fields.insert(index + 1, group);
+  }
 
-function toGroup(person): FormGroup {
-  const newPerson = Object.assign({}, person);
-  for ( const key in newPerson ) {
-    if (newPerson[key]) {
-      newPerson[key] = toControl(newPerson[key]);
+  onEditData(index: number): void {
+    this.fields.controls[index].get('isEdit').setValue(true);
+  }
+
+  onSaveData(index: number): void {
+    this.fields.controls[index].get('isEdit').setValue(false);
+  }
+
+  toEditable(person) {
+    return {...person, isEdit: false};
+  }
+
+  toControl(value) {
+    return new FormControl(value);
+  }
+
+  toGroup(person): FormGroup {
+    const newPerson = {...person};
+    for ( const key in newPerson ) {
+      if (newPerson[key] ||
+      typeof newPerson[key] === 'boolean') {
+        newPerson[key] = this.toControl(newPerson[key]);
+      }
     }
+    return new FormGroup(newPerson);
   }
-  return new FormGroup(newPerson);
+
 }
+
+

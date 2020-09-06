@@ -15,34 +15,104 @@
     <tbody>
       <tr *ngFor="let field of fields.controls; let idx = index" [formGroup]="field">
         <td>
-          <span>{{field.get('id').value}}</span>
-          <input type="text" name="id" formControlName="id">
+          <span *ngIf="!field.get('isEdit').value">{{field.get('id').value}}</span>
+          <div *ngIf="field.get('isEdit').value">
+            <input
+              type="text"
+              name="id"
+              formControlName="id">
+          </div>
         </td>
         <td>
-          <span>{{field.get('fullName').value}}</span>
+          <span *ngIf="!field.get('isEdit').value">{{field.get('fullName').value}}</span>
+          <div *ngIf="field.get('isEdit').value">
+            <input
+              type="text"
+              name="name"
+              formControlName="fullName">
+          </div>
         </td>
         <td>
-          <span>{{field.get('sex').value}}</span>
+          <span *ngIf="!field.get('isEdit').value">{{field.get('sex').value}}</span>
+          <div *ngIf="field.get('isEdit').value">
+            <input
+              type="radio"
+              name="sex"
+              formControlName="sex" value="муж">
+            <input
+              type="radio"
+              name="sex"
+              formControlName="sex" value="жен">
+          </div>
         </td>
         <td>
-          <span>{{field.get('birthday').value}}</span>
+          <span *ngIf="!field.get('isEdit').value">{{field.get('birthday').value}}</span>
+          <div *ngIf="field.get('isEdit').value">
+            <input
+              type="date"
+              name="date"
+              formControlName="birthday">
+          </div>
         </td>
         <td>
-          <span>{{field.get('familyStatus').value}}</span>
+          <span *ngIf="!field.get('isEdit').value">{{field.get('familyStatus').value ? 'Да' : 'Нет'}}</span>
+          <div *ngIf="field.get('isEdit').value">
+            <input
+              formControlName="familyStatus"
+              id="check{{idx}}"
+              type="checkbox"
+              name="family"
+              value="женат">
+            <label
+              for="check{{idx}}">Да/Нет</label>
+          </div>
         </td>
         <td>
-          <span>{{field.get('education').value}}</span>
+          <span *ngIf="!field.get('isEdit').value">{{field.get('education').value}}</span>
+          <div *ngIf="field.get('isEdit').value">
+            <select
+              formControlName="education"
+              name="education" >
+              <option value="БНТУ">БНТУ</option>
+              <option value="БАТУ">БАТУ</option>
+              <option value="БГУИР">БГУИР</option>
+              <option value="МИТСО">МИТСО</option>
+            </select>
+          </div>
         </td>
         <td>
-          <span>{{field.get('phone').value}}</span>
+          <span *ngIf="!field.get('isEdit').value">{{field.get('phone').value}}</span>
+          <div>
+<!--            *ngIf="field.get('isEdit').value"-->
+
+            <input
+              formControlName="phone"
+              [control]="field"
+              appMask="(__) ______"
+              type="tel"
+              name="phone" >
+
+          </div>
         </td>
         <td>
-          <button>Удалить</button>
-          <button>Редактировать</button>
+          <button
+            (click)="onDeleteData(idx)"
+          >Удалить</button>
+          <button
+            *ngIf="!field.get('isEdit').value"
+            (click)="onEditData(idx)">Редактировать</button>
+          <button
+            *ngIf="field.get('isEdit').value"
+            (click)="onSaveData(idx)"
+          >
+            Сохранить
+          </button>
+          <button
+            (click)="onAddData(idx)"
+          >Добавить блок</button>
         </td>
       </tr>
     </tbody>
   </table>
 
-  <button>Добавить блок</button>
 </div>
