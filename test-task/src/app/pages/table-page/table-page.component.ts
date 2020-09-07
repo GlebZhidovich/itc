@@ -1,56 +1,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { SaveService } from '../../services/save.service';
-
-interface IPersonsInfo {
-  id: string;
-  fullName: string;
-  sex: string;
-  birthday: string;
-  familyStatus: boolean;
-  education: string;
-  phone: string;
-}
-
-const personsInfo: IPersonsInfo[] = [
-  {
-    id: '1',
-    fullName: 'Gleb Zhidovich',
-    sex: 'муж',
-    birthday: '1992-09-09',
-    familyStatus: true,
-    education: 'БНТУ',
-    phone: '(33) 5233326'
-  },
-  {
-    id: '2',
-    fullName: 'Zina Zhidovich',
-    sex: 'жен',
-    birthday: '1992-09-09',
-    familyStatus: false,
-    education: 'БГУИР',
-    phone: '(33) 5233326'
-  }
-];
+import { Subscription } from 'rxjs';
+import { reduce, map } from 'rxjs/operators';
+import { DataService, IPersonsInfo } from '../../services/data.service';
 
 @Component({
   selector: 'app-table-page',
   templateUrl: './table-page.component.html',
   styleUrls: ['./table-page.component.scss']
 })
-export class TablePageComponent implements OnInit {
+export class TablePageComponent implements OnInit, OnDestroy {
 
   public fields: FormArray;
+  private mapPerson$: Subscription;
 
-  constructor(private saveService: SaveService) {
-  }
-
-  ngOnInit() {
-    const mapPerson = personsInfo
-      .map(person => this.toEditable(person))
-      .map(person => this.toGroup(person));
-
-    this.fields = new FormArray(mapPerson);
+  constructor(private dataService: DataService) {
   }
 
   onDeleteData(index: number): void {
@@ -58,12 +22,12 @@ export class TablePageComponent implements OnInit {
   }
 
   onAddData(index: number): void {
-    const pattern = {
+    const pattern: IPersonsInfo = {
       id: '',
       fullName: '',
       sex: '',
       birthday: '',
-      familyStatus: '',
+      familyStatus: false,
       education: '',
       phone: '',
       isEdit: true
@@ -82,7 +46,7 @@ export class TablePageComponent implements OnInit {
     }
   }
 
-  toEditable(person) {
+  toEditable(person: IPersonsInfo): IPersonsInfo {
     return {...person, isEdit: false};
   }
 
@@ -121,13 +85,36 @@ export class TablePageComponent implements OnInit {
 
   onSubmit() {
     if (this.fields.valid) {
-      const data = this.fields.value
-        .map(group => {
+      const data: IPersonsInfo[] = this.fields.value
+        .map((group: IPersonsInfo) => {
           delete group.isEdit;
           return group;
         });
-      this.saveService.onSaveData(data);
+      this.dataService.onSaveData(data);
     }
+  }
+
+
+  ngOnInit() {
+    this.mapPerson$ = this.dataService.onLoadData()
+      .pipe(
+        map(person => this.toEditable(person)),
+        map(person => this.toGroup(person)),
+        reduce((acc, obj) => {
+          acc.push(obj);
+          return acc;
+        }, [])
+      )
+      .subscribe({
+        next: (data: FormGroup[]) => {
+          this.fields = new FormArray(data);
+        },
+        error: err => console.log(err)
+      });
+  }
+
+  ngOnDestroy() {
+    this.mapPerson$.unsubscribe();
   }
 }
 
