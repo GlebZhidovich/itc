@@ -108,9 +108,9 @@
           <span *ngIf="!field.get('isEdit').value">{{field.get('phone').value}}</span>
           <div
             *ngIf="field.get('isEdit').value">
+
             <input
               formControlName="phone"
-              [control]="field"
               appMask="(__) ______"
               type="tel"
               name="phone" >

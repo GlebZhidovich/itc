@@ -3,34 +3,47 @@ import { Directive, ElementRef, HostListener, Input, OnInit } from '@angular/cor
 @Directive({
   selector: '[appMask]'
 })
-export class MaskDirective implements OnInit {
+export class MaskDirective implements OnInit{
 
   @Input() appMask;
-  @Input() control;
+  private mask;
 
   constructor(private elementRef: ElementRef) {
   }
 
-  @HostListener('keydown', ['$event']) onKeyDown(event) {
-    if (this.elementRef.nativeElement.value.includes('_') &&
-      parseInt(event.key, 10)
-    ) {
-      this.elementRef.nativeElement.value =
-        this.control.get('phone').value =
-          this.control.get('phone').value.replace('_', event.key);
+  @HostListener('keyup')
+  @HostListener('click') onChange() {
+    console.log('change');
+    const field = this.elementRef.nativeElement;
+    const oldStart = field.selectionStart;
+    const oldEnd = field.selectionEnd;
+
+    field.value = this.reapplyMask(field.value);
+
+    field.selectionStart = oldStart;
+    field.selectionEnd = oldEnd;
+  }
+
+  applyMask(data) {
+    return this.mask.map(function(char) {
+      if (char !== '_') { return char; }
+      if (data.length === 0) { return char; }
+      return data.shift();
+    }).join('');
+  }
+
+  reapplyMask(data) {
+    return this.applyMask(this.stripMask(data));
+  }
+
+  stripMask(maskedData) {
+    function isDigit(char) {
+      return /\d/.test(char);
     }
-    if (event.key === 'Backspace') {
-      this.elementRef.nativeElement.value =
-      this.control.get('phone').value =
-        this.control.get('phone').value
-        .split('').reverse().join('').replace(/\d/, '_').split('').reverse().join('');
-    }
-    event.preventDefault();
+    return maskedData.split('').filter(isDigit);
   }
 
   ngOnInit() {
-    if (this.control.get('phone').value === '') {
-      this.elementRef.nativeElement.value = this.control.get('phone').value = this.appMask;
-    }
+    this.mask = this.appMask.split('');
   }
 }
