@@ -68,6 +68,7 @@ export class TablePageComponent implements OnInit, OnDestroy {
       birthday: [Validators.required],
       familyStatus: [Validators.required],
       education: [Validators.required],
+      phone: [Validators.required],
     };
     const newPerson = {...person};
     for ( const key in newPerson ) {
@@ -83,7 +84,7 @@ export class TablePageComponent implements OnInit, OnDestroy {
     return new FormGroup(newPerson);
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.fields.valid) {
       const data: IPersonsInfo[] = this.fields.value
         .map((group: IPersonsInfo) => {

@@ -13,7 +13,6 @@ export class MaskDirective implements OnInit{
 
   @HostListener('keyup')
   @HostListener('click') onChange() {
-    console.log('change');
     const field = this.elementRef.nativeElement;
     const oldStart = field.selectionStart;
     const oldEnd = field.selectionEnd;
@@ -25,7 +24,7 @@ export class MaskDirective implements OnInit{
   }
 
   applyMask(data) {
-    return this.mask.map(function(char) {
+    return this.mask.map((char) => {
       if (char !== '_') { return char; }
       if (data.length === 0) { return char; }
       return data.shift();
