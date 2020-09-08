@@ -59,11 +59,8 @@ export class TablePageComponent implements OnInit, OnDestroy {
 
   toGroup(person): FormGroup {
     const validators = {
-      id: [Validators.required,
-        Validators.minLength(1),
-        Validators.maxLength(10)],
-      fullName: [Validators.required,
-        Validators.minLength(6)],
+      id: [Validators.required],
+      fullName: [Validators.required],
       sex: [Validators.required],
       birthday: [Validators.required],
       familyStatus: [Validators.required],
