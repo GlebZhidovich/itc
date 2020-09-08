@@ -148,7 +148,6 @@ export class MaskDirective implements OnInit {
         newVal = '';
       }
     }
-    field.value = newVal;
     this.control.get(this.formControlName).setValue(newVal);
   }
 
